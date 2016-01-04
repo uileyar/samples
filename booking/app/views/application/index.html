@@ -7,24 +7,24 @@
 
   <form action="{{url "Application.Login"}}" id="formLogin" method="POST">
     <p class="field">
-      <label>Login Name:</label>
+      <label>{{msg . "username"}}:</label>
       <input type="text" name="username" size="19" value="{{.flash.username}}" />
     </p>
     <p class="field">
-      <label>Password:</label>
-      <input type="password" name="password" size="19"/>
+      <label>{{msg . "password"}}:</label>
+      <input type="password" name="password"  size="19"/>
     </p>
     <p class="field">
-      <label>Remember:</label>
+      <label>{{msg . "remember"}}:</label>
       <input type="checkbox" name="remember" value="true"/>
     </p>
     <p class="buttons">
-      <input type="submit" value="Account login" />
+      <input type="submit" value={{msg . "login"}} />
     </p>
   </form>
 
   <p>
-    <a href="{{url "Application.Register"}}">Register New User</a>
+    <a href="{{url "Application.Register"}}">{{msg . "registernew"}}</a>
   </p>
 
 </div>

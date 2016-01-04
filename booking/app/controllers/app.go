@@ -1,10 +1,12 @@
 package controllers
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"fmt"
+
 	"github.com/revel/revel"
 	"github.com/revel/samples/booking/app/models"
 	"github.com/revel/samples/booking/app/routes"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Application struct {
@@ -40,6 +42,7 @@ func (c Application) getUser(username string) *models.User {
 }
 
 func (c Application) Index() revel.Result {
+	fmt.Println("Index in")
 	if c.connected() != nil {
 		return c.Redirect(routes.Hotels.Index())
 	}

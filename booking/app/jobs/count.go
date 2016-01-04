@@ -2,8 +2,7 @@ package jobs
 
 import (
 	"fmt"
-	"github.com/revel/revel"
-	"github.com/revel/modules/jobs/app/jobs"
+
 	"github.com/revel/samples/booking/app/controllers"
 	"github.com/revel/samples/booking/app/models"
 )
@@ -20,8 +19,27 @@ func (c BookingCounter) Run() {
 	fmt.Printf("There are %d bookings.\n", len(bookings))
 }
 
+type UserCounter struct{}
+
+func (u UserCounter) Run() {
+	users, err := controllers.Dbm.Select(models.User{},
+		`select * from user`)
+	if err != nil {
+		panic(err)
+	}
+
+	for n, v := range users {
+		fmt.Printf("There are %d user %v\n", n+1, v)
+	}
+}
+
 func init() {
-	revel.OnAppStart(func() {
-		jobs.Schedule("@every 1m", BookingCounter{})
-	})
+	/*
+		revel.OnAppStart(func() {
+			jobs.Schedule("@every 1m", BookingCounter{})
+		})
+		revel.OnAppStart(func() {
+			jobs.Schedule("@every 1m", UserCounter{})
+		})
+	*/
 }

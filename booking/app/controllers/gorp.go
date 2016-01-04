@@ -1,13 +1,15 @@
 package controllers
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"database/sql"
+	"fmt"
+
 	"github.com/go-gorp/gorp"
 	_ "github.com/mattn/go-sqlite3"
-	r "github.com/revel/revel"
 	"github.com/revel/modules/db/app"
+	r "github.com/revel/revel"
 	"github.com/revel/samples/booking/app/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -15,44 +17,31 @@ var (
 )
 
 func InitDB() {
+	fmt.Println("InitDB in")
 	db.Init()
 	Dbm = &gorp.DbMap{Db: db.Db, Dialect: gorp.SqliteDialect{}}
 
-	setColumnSizes := func(t *gorp.TableMap, colSizes map[string]int) {
-		for col, size := range colSizes {
-			t.ColMap(col).MaxSize = size
-		}
-	}
-
 	t := Dbm.AddTable(models.User{}).SetKeys(true, "UserId")
 	t.ColMap("Password").Transient = true
-	setColumnSizes(t, map[string]int{
-		"Username": 20,
-		"Name":     100,
-	})
 
 	t = Dbm.AddTable(models.Hotel{}).SetKeys(true, "HotelId")
-	setColumnSizes(t, map[string]int{
-		"Name":    50,
-		"Address": 100,
-		"City":    40,
-		"State":   6,
-		"Zip":     6,
-		"Country": 40,
-	})
 
 	t = Dbm.AddTable(models.Booking{}).SetKeys(true, "BookingId")
 	t.ColMap("User").Transient = true
 	t.ColMap("Hotel").Transient = true
 	t.ColMap("CheckInDate").Transient = true
 	t.ColMap("CheckOutDate").Transient = true
-	setColumnSizes(t, map[string]int{
-		"CardNumber": 16,
-		"NameOnCard": 50,
-	})
 
 	Dbm.TraceOn("[gorp]", r.INFO)
-	Dbm.CreateTables()
+
+	err := Dbm.CreateTables()
+	if err == nil {
+		insertDemoData()
+	}
+}
+
+func insertDemoData() {
+	fmt.Println("insertDemoData in")
 
 	bcryptPassword, _ := bcrypt.GenerateFromPassword(
 		[]byte("demo"), bcrypt.DefaultCost)
@@ -62,15 +51,17 @@ func InitDB() {
 	}
 
 	hotels := []*models.Hotel{
-		&models.Hotel{0, "Marriott Courtyard", "Tower Pl, Buckhead", "Atlanta", "GA", "30305", "USA", 120},
-		&models.Hotel{0, "W Hotel", "Union Square, Manhattan", "New York", "NY", "10011", "USA", 450},
-		&models.Hotel{0, "Hotel Rouge", "1315 16th St NW", "Washington", "DC", "20036", "USA", 250},
+		&models.Hotel{0, "111 Marriott Courtyard", "Tower Pl, Buckhead", "Atlanta", "GA", "30305", "USA", 120},
+		&models.Hotel{0, "222 W Hotel", "Union Square, Manhattan", "New York", "NY", "10011", "USA", 450},
+		&models.Hotel{0, "333 Hotel Rouge", "1315 16th St NW", "Washington", "DC", "20036", "USA", 250},
 	}
-	for _, hotel := range hotels {
+	for n, hotel := range hotels {
+		fmt.Printf("%d: hotel = %v\n", n+1, hotel)
 		if err := Dbm.Insert(hotel); err != nil {
 			panic(err)
 		}
 	}
+	fmt.Println("insertDemoData out")
 }
 
 type GorpController struct {
@@ -79,15 +70,19 @@ type GorpController struct {
 }
 
 func (c *GorpController) Begin() r.Result {
+	fmt.Println("Begin in")
+
 	txn, err := Dbm.Begin()
 	if err != nil {
 		panic(err)
 	}
 	c.Txn = txn
+	fmt.Println("Begin out")
 	return nil
 }
 
 func (c *GorpController) Commit() r.Result {
+	fmt.Println("Commit in")
 	if c.Txn == nil {
 		return nil
 	}
@@ -95,10 +90,12 @@ func (c *GorpController) Commit() r.Result {
 		panic(err)
 	}
 	c.Txn = nil
+	fmt.Println("Commit out")
 	return nil
 }
 
 func (c *GorpController) Rollback() r.Result {
+	fmt.Println("Rollback in")
 	if c.Txn == nil {
 		return nil
 	}
@@ -106,5 +103,6 @@ func (c *GorpController) Rollback() r.Result {
 		panic(err)
 	}
 	c.Txn = nil
+	fmt.Println("Rollback out")
 	return nil
 }
