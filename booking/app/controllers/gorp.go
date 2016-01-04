@@ -8,7 +8,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/revel/modules/db/app"
 	r "github.com/revel/revel"
-	"github.com/revel/samples/booking/app/models"
+	"github.com/uileyar/samples/booking/app/models"
 	"golang.org/x/crypto/bcrypt"
 )
 

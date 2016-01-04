@@ -3,8 +3,8 @@ package jobs
 import (
 	"fmt"
 
-	"github.com/revel/samples/booking/app/controllers"
-	"github.com/revel/samples/booking/app/models"
+	"github.com/uileyar/samples/booking/app/controllers"
+	"github.com/uileyar/samples/booking/app/models"
 )
 
 // Periodically count the bookings in the database.
