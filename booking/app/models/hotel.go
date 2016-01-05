@@ -5,11 +5,14 @@ import (
 )
 
 type Hotel struct {
-	HotelId          int
-	Name, Address    string
-	City, State, Zip string
-	Country          string
-	Price            int
+	HotelId int
+	Name    string `db:", size:50"`
+	Address string `db:", size:100"`
+	City    string `db:", size:40"`
+	State   string `db:", size:6"`
+	Zip     string `db:", size:6"`
+	Country string `db:", size:40"`
+	Price   int
 }
 
 func (hotel *Hotel) Validate(v *revel.Validation) {

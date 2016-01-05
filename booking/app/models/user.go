@@ -2,15 +2,17 @@ package models
 
 import (
 	"fmt"
-	"github.com/revel/revel"
 	"regexp"
+
+	"github.com/revel/revel"
 )
 
 type User struct {
-	UserId             int
-	Name               string
-	Username, Password string
-	HashedPassword     []byte
+	UserId         int
+	Name           string `db:", size:100"`
+	Username       string `db:", size:20"`
+	Password       string
+	HashedPassword []byte
 }
 
 func (u *User) String() string {

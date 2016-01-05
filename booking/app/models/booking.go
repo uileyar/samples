@@ -2,10 +2,11 @@ package models
 
 import (
 	"fmt"
-	"github.com/go-gorp/gorp"
-	"github.com/revel/revel"
 	"regexp"
 	"time"
+
+	"github.com/go-gorp/gorp"
+	"github.com/revel/revel"
 )
 
 type Booking struct {
@@ -14,8 +15,8 @@ type Booking struct {
 	HotelId      int
 	CheckInStr   string
 	CheckOutStr  string
-	CardNumber   string
-	NameOnCard   string
+	CardNumber   string `db:", size:16"`
+	NameOnCard   string `db:", size:50"`
 	CardExpMonth int
 	CardExpYear  int
 	Smoking      bool
